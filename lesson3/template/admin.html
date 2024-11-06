@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Users</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Admin Panel - User Management</h1>
+
+    <!-- Add New User Button -->
+    <form id="newUserForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <button type="submit">Send</button>
+    </form>
+
+    <!-- User List Table -->
+    <table class="user-table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Users}}
+        <tr>
+            <td>{{.Id}}</td>
+            <td>{{.Username}}</td>
+            <td>{{if .Email}}{{.Email}}{{else}}Default@Email{{end}}</td>
+            <td>{{if .PhoneNumber}}{{.PhoneNumber}}{{else}}-{{end}}</td>
+            <td>{{if .FirstName}}{{.FirstName}}{{else}}-{{end}}</td>
+            <td>{{if .LastName}}{{.LastName}}{{else}}-{{end}}</td>
+            <td class="actions">
+                <button onclick="deleteUser({{.Id}})">Delete User</button>
+            </td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    document.getElementById("newUserForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Construct the JSON payload
+        const userData = {
+            username: document.getElementById("username").value,
+        };
+
+        // Send JSON data to server
+        fetch("/admin/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert("User created successfully!");
+                    document.getElementById("newUserForm").reset(); // Reset form
+                    location.reload()
+                } else {
+                    return response.json().then(data => {
+                        alert("Error: " + (data.message || "Unable to create user"));
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("An error occurred while creating the user.");
+            });
+    });
+
+    function deleteUser(id) {
+        if (confirm(`Are you sure you want to delete user ${id}?`)) {
+            fetch(`/admin/user/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert(`User ${id} deleted successfully`);
+                        location.reload();
+                    } else {
+                        alert(`Failed to delete user ${id}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert(`An error occurred while deleting user ${id}`);
+                });
+        }
+    }
+</script>
+
+</body>
+</html>

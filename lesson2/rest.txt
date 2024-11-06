@@ -1,0 +1,18 @@
+rest:
+
+1. Collection CRUD (create read update delete)
+User = {"id": int|None, name": string, "age": int}
+    * Get All : GET /user?limit=1 -> [{"name": "vasya", ...}, ...]
+    * GetById : GET /user/1 -> {"name": "vasya", ...}
+    * Add user : POST /user | body: {"name": "Nikita", "age": 25} -> {"name": "Nikita", ...}
+    * Delete: DELETE /user/1 | body:
+    * Update: PUT/PATCH /user/1 | body: {"name": "Nicola"}
+
+http://yandex.ru/user/1/post
+
+jsonrpc: rpc - remote procedure call
+
+1. method & json
+/adduser body: {"name": "Nikita"}
+/deleteuser/1 -> 204
+/increment_age {"new_age": 26}
